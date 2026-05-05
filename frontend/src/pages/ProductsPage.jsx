@@ -1,6 +1,15 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Row, Col, Image, ListGroup, Card, Button, Form } from 'react-bootstrap';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import {
+  Row,
+  Col,
+  Image,
+  ListGroup,
+  Card,
+  Button,
+  Form,
+} from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
 
 // My files
 import Rating from '../components/Rating';
@@ -12,11 +21,10 @@ import { addToCart } from '../slices/cartSlice';
 const ProductsPage = () => {
   const { id: productId } = useParams();
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [qty, setQty] = useState(1);
-
-  const addToCartHandler = () => {
-
-  }
 
   const {
     data: product,
@@ -24,6 +32,10 @@ const ProductsPage = () => {
     error,
   } = useGetProductDetailsQuery(productId);
 
+  const addToCartHandler = () => {
+    dispatch(addToCart({ ...product, qty }));
+    navigate(`/cart/${productId}?qty=${qty}`);
+  };
   return (
     <>
       <Link className='btn btn-light my-3' to='/'>
@@ -109,7 +121,7 @@ const ProductsPage = () => {
                     className='btn-block'
                     type='button'
                     disabled={product.countInStock === 0}
-                    onClick= {addToCartHandler}
+                    onClick={addToCartHandler}
                   >
                     Add to Cart
                   </Button>
