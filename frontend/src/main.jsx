@@ -15,12 +15,14 @@ import './assets/styles/index.css';
 import App from './App.jsx';
 import HomePage from './pages/HomePage.jsx';
 import ProductsPage from './pages/ProductsPage.jsx';
+import CartPage from './pages/CartPage.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
       <Route index={true} path='/' element={<HomePage />} />
       <Route path='/product/:id' element={<ProductsPage />} />
+      <Route path='/cart' element={<CartPage />} />
     </Route>,
   ),
 );
