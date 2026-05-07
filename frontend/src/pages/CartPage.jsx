@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // My files
 import Message from '../components/Message';
+import { addToCart, removeFromCart } from '../slices/cartSlice';
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -20,6 +21,18 @@ const CartPage = () => {
 
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
+
+  const addToCartHandler = async (product, qty) => {
+    dispatch(addToCart({ ...product, qty }));
+  };
+
+  const removeFromCartHandler = async (id) => {
+    dispatch(removeFromCart(id));
+  };
+
+  const checkOutHandler = () => {
+    navigate('/login?redirect=/shipping')
+  }
 
   return (
     <Row>
@@ -43,7 +56,9 @@ const CartPage = () => {
                     <Form.Control
                       as='select'
                       value={item.qty}
-                      onChange={() => {}}
+                      onChange={(e) =>
+                        addToCartHandler(item, Number(e.target.value))
+                      }
                     >
                       {[...Array(item.countInStock).keys()].map((x) => (
                         <option key={x + 1} value={x + 1}>
@@ -53,7 +68,11 @@ const CartPage = () => {
                     </Form.Control>
                   </Col>
                   <Col md={2}>
-                    <Button type='button' variant='light'>
+                    <Button
+                      onClick={() => removeFromCartHandler(item._id)}
+                      type='button'
+                      variant='light'
+                    >
                       <FaTrash />
                     </Button>
                   </Col>
@@ -71,6 +90,20 @@ const CartPage = () => {
                 Subtotal ({cartItems.reduce((acc, item) => acc + item.qty, 0)})
                 items
               </h2>
+              $
+              {cartItems
+                .reduce((acc, item) => acc + item.qty * item.price, 0)
+                .toFixed(2)}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <Button
+                type='button'
+                className='btn-block '
+                disabled={cartItems.length === 0}
+                onClick={checkOutHandler}
+              >
+                Proceed To Checkout
+              </Button>
             </ListGroup.Item>
           </ListGroup>
         </Card>
